@@ -1,5 +1,5 @@
 {
-  "name": "faker",
+  "name": "faker-typescript",
   "version": "1.0.0",
   "description": "TypeScript fake data generator (port of Python Faker)",
   "main": "dist/index.js",
@@ -9,20 +9,19 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./dictionary": {
-      "types": "./src/dictionary/index.ts",
-      "default": "./src/dictionary/index.ts"
     }
   },
   "scripts": {
     "build": "tsc",
-    "test": "vitest run"
+    "dev": "tsx src/index.ts",
+    "test": "tsx test.ts"
   },
+  "keywords": ["faker", "mock", "data", "generator", "typescript"],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^25.6.0",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3",
-    "vitest": "^3.0.0"
+    "typescript": "^6.0.3"
   }
 }

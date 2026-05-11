@@ -1,9 +1,6 @@
 # Old faker-python repo (not part of TypeScript migration)
 faker-python/
 
-# Old faker-typescript experimental directory (migrated into src/)
-faker-typescript/
-
 # Dependencies
 node_modules/
 
