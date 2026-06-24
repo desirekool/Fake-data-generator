@@ -18,12 +18,12 @@ export class ProfileProvider extends BaseProvider {
     mail: string;
     birthdate: Date;
   } {
-    const s = sex ?? this.generator.randomElement(["M", "F"]);
-    const birthYear = this.generator.randomInt(1970, 2005);
-    const birthMonth = this.generator.randomInt(1, 12);
-    const birthDay = this.generator.randomInt(1, 28);
+    const s = sex ?? this.randomElement(["M", "F"]);
+    const birthYear = this.randomInt(1970, 2005);
+    const birthMonth = this.randomInt(1, 12);
+    const birthDay = this.randomInt(1, 28);
     const name = this.generator.parse("{{first_name}} {{last_name}}");
-    const username = name.toLowerCase().replace(/\s/g, "_") + this.generator.numerify("##");
+    const username = name.toLowerCase().replace(/\s/g, "_") + this.numerify("##");
 
     return {
       username,
@@ -36,8 +36,8 @@ export class ProfileProvider extends BaseProvider {
   }
 
   profile(fields?: string[], sex?: "M" | "F"): Record<string, any> & { login: string } {
-    const s = sex ?? this.generator.randomElement(["M", "F"]);
-    const login = this.generator.parse("{{first_name}}").toLowerCase() + "." + this.generator.parse("{{last_name}}").toLowerCase() + this.generator.numerify("##");
+    const s = sex ?? this.randomElement(["M", "F"]);
+    const login = this.generator.parse("{{first_name}}").toLowerCase() + "." + this.generator.parse("{{last_name}}").toLowerCase() + this.numerify("##");
 
     const defaultFields = ["job", "company", "ssn", "residence", "current_location", "blood_group", "website"];
     const selected = fields || defaultFields;
@@ -47,19 +47,19 @@ export class ProfileProvider extends BaseProvider {
     for (const field of selected) {
       switch (field) {
         case "job":
-          if (this.data.jobTitles) profile.job = this.randomElement(this.data.jobTitles);
+          profile.job = this.generator.job();
           break;
         case "company":
           profile.company = this.generator.parse("{{last_name}} {{company_suffix}}");
           break;
         case "ssn":
-          profile.ssn = this.generator.numerify("###-##-####");
+          profile.ssn = this.numerify("###-##-####");
           break;
         case "residence":
           profile.residence = this.generator.parse("{{street_address}} {{city}}, {{state}}");
           break;
         case "current_location":
-          profile.current_location = [this.generator.randomInt(-180, 180), this.generator.randomInt(-90, 90)];
+          profile.current_location = [this.randomInt(-180, 180), this.randomInt(-90, 90)];
           break;
         case "blood_group":
           profile.blood_group = this.randomElement(["A", "B", "AB", "O"]);

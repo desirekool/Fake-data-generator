@@ -55,7 +55,7 @@ export class MiscProvider extends BaseProvider {
     return hex;
   }
 
-  uuid4(): string {
+   uuid4(): string {
     const hex = "0123456789abcdef";
     let uuid = "";
     const template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
@@ -66,18 +66,12 @@ export class MiscProvider extends BaseProvider {
         uuid += hex[this.generator.randomInt(8, 11)];
       } else {
         uuid += c;
-      }
-    }
+       }
+     }
     return uuid;
   }
 
-  password(
-    length = 10,
-    special_chars = true,
-    digits = true,
-    upper_case = true,
-    lower_case = true
-  ): string {
+  password(length = 10, special_chars = true, digits = true, upper_case = true, lower_case = true): string {
     const specials = "!@#$%^&*()_+-=[]{}|;:,.<>?";
     const numbers = "0123456789";
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -105,16 +99,16 @@ export class MiscProvider extends BaseProvider {
   }
 
   zip(length = 5, charset = "dec"): string {
-    if (charset === "dec") {
-      return this.generator.numerify("#".repeat(length));
-    }
-    return this.generator.lexify("?".repeat(length));
-  }
+     if (charset === "dec") {
+       return this.numerify("#".repeat(length));
+     }
+     return this.lexify("?".repeat(length));
+   }
 
   tar(suffix = "tar.gz"): string {
-    const name = this.generator.lexify("????????");
-    return `${name}.${suffix}`;
-  }
+     const name = this.lexify("????????");
+     return `${name}.${suffix}`;
+   }
 
   image(
     size = 100,
@@ -177,7 +171,7 @@ export class MiscProvider extends BaseProvider {
   }
 
   private _random_value(max_depth: number, with_value_types: string, current_depth: number): any {
-    if (current_depth >= max_depth) return this.random_letter();
+    if (current_depth >= max_depth) return this.randomLetter();
     const types = ["string", "number", "boolean", "list", "dict"];
     const type = with_value_types || this.randomElement(types);
     switch (type) {
@@ -186,25 +180,23 @@ export class MiscProvider extends BaseProvider {
       case "boolean": return this.boolean();
       case "list": return [this._random_value(max_depth, with_value_types, current_depth + 1)];
       case "dict": return { k: this._random_value(max_depth, with_value_types, current_depth + 1) };
-      default: return this.randomLetter();
+        default: return this.randomLetter();
+      }
     }
+
+  xml(): string {
+    const ws = "    ";
+    const domain = this.generator.parse("{{last_name}}").toLowerCase();
+    const body = `${ws}${ws}<tns:${this.generator.parse("{{last_name}}")} xmlns:tns="http://${domain}.com">\n${ws}${ws}${ws}<tns:${this.generator.parse("{{last_name}}")}>${this.generator.parse("{{catch_phrase}}")}</tns:${this.generator.parse("{{last_name}}")}>\n${ws}${ws}</tns:${this.generator.parse("{{last_name}}")}>`;
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tns="http://${domain}.com">\n${ws}<soap:Body>\n${body}\n${ws}</soap:Body>\n</soap:Envelope>`;
   }
 
-  xml(num: number = 10, include_header = true, root_tag: string = "soap:Envelope", encoding: string = "utf-8"): string {
-    const header = includeHeader ? `<?xml version='1.0' encoding='${encoding}'?>\n` : "";
-    const items: string[] = [];
-    for (let i = 0; i < num; i++) {
-      items.push(`  <item${i}>${this.randomLetter()}</item${i}>`);
-    }
-    return `${header}<${root_tag}>\n${items.join("\n")}\n</${root_tag}>`;
-  }
-
-  fixed_width(data_columns: Record<string, {align?: string; length: number}>, num_rows = 10, align: "left" | "right" = "left"): string {
+  fixed_width(data_columns: any, num_rows: number = 10, align: "left" | "right" = "left"): string {
     const lines: string[] = [];
     for (let i = 0; i < num_rows; i++) {
       let line = "";
       for (const [col, config] of Object.entries(data_columns)) {
-        const val = this.generator.lexify("?".repeat(config.length));
+        const val = this.lexify("?".repeat(config.length));
         line += align === "right" ? val.padStart(config.length) : val.padEnd(config.length);
       }
       lines.push(line);

@@ -40,26 +40,27 @@ export class PythonProvider extends BaseProvider {
   }
 
   pytuple(nb_elements = 10, variable_nb_elements = true, value_types?: string[]): unknown[] {
-    return this._pyiterable(nb_elements, variable_nb_elements, value_types, "()");
+    return [...this._pyiterable(nb_elements, variable_nb_elements, value_types)];
   }
 
   pyset(nb_elements = 10, variable_nb_elements = true, value_types?: string[]): Set<unknown> {
-    const arr = this._pyiterable(nb_elements, variable_nb_elements, value_types, "{}", true);
-    return new Set(arr);
+    return new Set([
+      ...this._pyiterable(nb_elements, variable_nb_elements, value_types, true),
+    ]);
   }
 
   pylist(nb_elements = 10, variable_nb_elements = true, value_types?: string[]): unknown[] {
-    return this._pyiterable(nb_elements, variable_nb_elements, value_types, "[]");
+    return [...this._pyiterable(nb_elements, variable_nb_elements, value_types)];
   }
 
   pyiterable(nb_elements = 10, variable_nb_elements = true, value_types?: string[]): unknown[] {
-    return this._pyiterable(nb_elements, variable_nb_elements, value_types, "[]");
+    return [...this._pyiterable(nb_elements, variable_nb_elements, value_types)];
   }
 
   pydict(nb_elements = 10, variable_nb_elements = true, value_types?: string[]): Record<string, unknown> {
+    const keys = [...this._pyiterable(nb_elements, variable_nb_elements, undefined)];
+    const values = [...this._pyiterable(nb_elements, variable_nb_elements, value_types)];
     const obj: Record<string, unknown> = {};
-    const keys = this._pyiterable(nb_elements, variable_nb_elements, undefined, "[]");
-    const values = this._pyiterable(nb_elements, variable_nb_elements, value_types, "[]");
     for (let i = 0; i < keys.length; i++) {
       obj[String(keys[i])] = values[i];
     }
@@ -71,7 +72,9 @@ export class PythonProvider extends BaseProvider {
   }
 
   enum<T extends {[key: string]: string | number}>(enum_type: T): T[keyof T] {
-    const values = Object.values(enum_type);
+    const allValues = Object.values(enum_type);
+    const hasNumbers = allValues.some(v => typeof v === "number");
+    const values = hasNumbers ? allValues.filter(v => typeof v === "number") : allValues;
     return values[this.generator.randomInt(0, values.length - 1)] as T[keyof T];
   }
 
@@ -96,13 +99,12 @@ export class PythonProvider extends BaseProvider {
     return this.generator.randomInt(min, max);
   }
 
-  private * _pyiterable(
+  private _pyiterable(
     nb_elements: number,
     variable_nb_elements: boolean,
     value_types: string[] | undefined,
-    _type: string,
     unique = false
-  ): IterableIterator<unknown> {
+  ): unknown[] {
     if (variable_nb_elements) nb_elements = this.generator.randomInt(1, nb_elements);
     const result: unknown[] = [];
     const pool = [
@@ -120,6 +122,6 @@ export class PythonProvider extends BaseProvider {
         result.push(this.randomElement(pool)());
       }
     }
-    return result[Symbol.iterator]();
+    return result;
   }
 }

@@ -3,45 +3,33 @@ import type { LocaleData } from "../../dictionary/types";
 
 export class CompanyProvider extends BaseProvider {
   __provider__ = "company";
-  private data: LocaleData;
+  protected data: LocaleData;
 
   constructor(generator: import("../../generator").Generator, data: LocaleData) {
     super(generator);
     this.data = data;
   }
 
-  company_suffix(): string {
-    return this.randomElement(this.data.companySuffixes || ["Inc", "Ltd", "LLC"]);
-  }
-
   company(): string {
-    const pattern = this.randomElement([
-      "{{last_name}} {{company_suffix}}",
-      "{{last_name}}-{{last_name}}",
-      "{{last_name}}, {{last_name}} and {{last_name}}",
-    ]);
+    const pattern = this.randomElement(this.data.companyFormats ?? ["{{last_name}} {{company_suffix}}"]);
     return this.generator.parse(pattern);
   }
 
-  buzzword(): string {
-    const words = [
-      ...(this.data.buzzAdjectives || []),
-      ...(this.data.buzzNouns || []),
-    ];
-    return words.length > 0 ? this.randomElement(words) : this.randomElement(["proactive", "synergistic", "innovative"]);
+  company_suffix(): string {
+    return this.randomElement(this.data.companySuffixes ?? ["Inc", "and Sons", "LLC", "Group", "PLC", "Ltd"]);
   }
 
   catch_phrase(): string {
-    const adj = this.data.catchPhraseAdjectives || ["Adaptive", "Advanced"];
-    const desc = this.data.catchPhraseDescriptors || ["Automated", "Integrated"];
-    const noun = this.data.catchPhraseNouns || ["system", "platform", "solution"];
-    return `${this.randomElement(adj)} ${this.randomElement(desc)} ${this.randomElement(noun)}`;
+    const adj = this.randomElement(this.data.catchPhraseAdjectives ?? ["Adaptive"]);
+    const desc = this.randomElement(this.data.catchPhraseDescriptors ?? ["24hour"]);
+    const noun = this.randomElement(this.data.catchPhraseNouns ?? ["ability"]);
+    return [adj, desc, noun].join(" ");
   }
 
   bs(): string {
-    const actions = this.data.buzzVerbs || ["implement", "utilize", "integrate"];
-    const descriptors = this.data.buzzAdjectives || ["scalable", "robust"];
-    const nouns = this.data.buzzNouns || ["platforms", "solutions"];
-    return `${this.randomElement(actions)} ${this.randomElement(descriptors)} ${this.randomElement(nouns)}`;
+    const verb = this.randomElement(this.data.buzzVerbs ?? ["implement"]);
+    const adj = this.randomElement(this.data.buzzAdjectives ?? ["clicks-and-mortar"]);
+    const noun = this.randomElement(this.data.buzzNouns ?? ["synergies"]);
+    return [verb, adj, noun].join(" ");
   }
 }

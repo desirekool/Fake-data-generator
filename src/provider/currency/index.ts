@@ -3,71 +3,46 @@ import type { LocaleData } from "../../dictionary/types";
 
 export class CurrencyProvider extends BaseProvider {
   __provider__ = "currency";
-  private data: LocaleData;
+  protected data: LocaleData;
 
   constructor(generator: import("../../generator").Generator, data: LocaleData) {
     super(generator);
     this.data = data;
   }
 
-  currency(): string {
-    return this.randomElement([
-      "USD", "EUR", "GBP", "JPY", "CNY", "INR", "BRL", "RUB",
-      "KRW", "MXN", "CAD", "AUD", "CHF", "SEK", "NZD",
-    ]);
+  currency(): [string, string] {
+    return this.randomElement(this.data.currencies);
   }
 
   currency_code(): string {
-    return this.currency();
+    return this.currency()[0];
   }
 
   currency_name(): string {
-    const codes: Record<string, string> = {
-      USD: "United States Dollar",
-      EUR: "Euro",
-      GBP: "British Pound Sterling",
-      JPY: "Japanese Yen",
-      CNY: "Chinese Yuan",
-      INR: "Indian Rupee",
-      BRL: "Brazilian Real",
-      RUB: "Russian Ruble",
-      KRW: "South Korean Won",
-      MXN: "Mexican Peso",
-      CAD: "Canadian Dollar",
-      AUD: "Australian Dollar",
-      CHF: "Swiss Franc",
-      SEK: "Swedish Krona",
-      NZD: "New Zealand Dollar",
-    };
-    return codes[this.currency()] || "Unknown Currency";
+    return this.currency()[1];
   }
 
-  cryptocurrency(): string {
-    return this.randomElement(["BTC", "ETH", "LTC", "XRP", "ADA", "DOT", "SOL", "DOGE", "AVAX", "MATIC"]);
+  currency_symbol(code?: string): string {
+    if (code === undefined) {
+      code = this.randomElement(Object.keys(this.data.currencySymbols));
+    }
+    return this.data.currencySymbols[code] || "\u00a4";
+  }
+
+  cryptocurrency(): [string, string] {
+    return this.randomElement(this.data.cryptocurrencyCodes);
   }
 
   cryptocurrency_code(): string {
-    return this.cryptocurrency();
+    return this.cryptocurrency()[0];
   }
 
   cryptocurrency_name(): string {
-    const codes: Record<string, string> = {
-      BTC: "Bitcoin",
-      ETH: "Ethereum",
-      LTC: "Litecoin",
-      XRP: "Ripple",
-      ADA: "Cardano",
-      DOT: "Polkadot",
-      SOL: "Solana",
-      DOGE: "Dogecoin",
-      AVAX: "Avalanche",
-      MATIC: "Polygon",
-    };
-    return codes[this.cryptocurrency()] || "Unknown Cryptocurrency";
+    return this.cryptocurrency()[1];
   }
 
   pricetag(): string {
-    const price = this.generator.randomInt(1, 9999);
-    return `$${price.toFixed(2)}`;
+    const [code] = this.currency();
+    return code + "\u00a0" + this.numerify(this.randomElement(this.data.priceFormats));
   }
 }

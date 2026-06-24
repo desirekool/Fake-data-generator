@@ -73,7 +73,7 @@ describe("PythonProvider", () => {
   });
 
   it("generates pylist with elements", () => {
-    const val = faker.pylist(5);
+    const val = faker.pylist(5, false);
     expect(val.length).toBe(5);
   });
 

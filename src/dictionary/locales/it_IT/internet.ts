@@ -1,0 +1,8 @@
+import type { LocaleData } from "../../types";
+
+export const internet: Partial<LocaleData> = {
+  freeEmailDomains: ['libero.it', 'libero.it', 'libero.it', 'tim.it', 'tin.it', 'alice.it', 'virgilio.it', 'tiscali.it', 'fastwebnet.it', 'vodafone.it', 'poste.it', 'gmail.com', 'gmail.com', 'gmail.com', 'outlook.com', 'live.com', 'hotmail.com', 'hotmail.it', 'yahoo.com', 'tele2.it'],
+  replacements: [['à', 'a'], ['é', 'e'], ['è', 'e'], ['ì', 'i'], ['ò', 'o'], ['ù', 'u']],
+  safe_email_tlds: ['com', 'net', 'eu', 'it', 'it', 'it'],
+  tlds: ['com', 'com', 'com', 'net', 'org', 'eu', 'it', 'it', 'it', 'it'],
+};

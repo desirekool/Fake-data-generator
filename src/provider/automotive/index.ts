@@ -1,9 +1,33 @@
 import { BaseProvider } from "../../generator";
 import type { LocaleData } from "../../dictionary/types";
 
+const VIN_CHARS = "1234567890ABCDEFGHJKLMNPRSTUVWXYZ";
+
+function _get_char_weight(c: string): number {
+  const code = c.charCodeAt(0);
+  if (code <= 64) {
+    return parseInt(c);
+  }
+  if (code <= 73) {
+    return code - 64;
+  }
+  if (code <= 82) {
+    return code - 73;
+  }
+  return code - 81;
+}
+
+function calculate_vin_str_weight(s: string, weightFactor: number[]): number {
+  let res = 0;
+  for (let i = 0; i < s.length; i++) {
+    res += _get_char_weight(s[i]) * (i < weightFactor.length ? weightFactor[i] : 0);
+  }
+  return res;
+}
+
 export class AutomotiveProvider extends BaseProvider {
   __provider__ = "automotive";
-  private data: LocaleData;
+  protected data: LocaleData;
 
   constructor(generator: import("../../generator").Generator, data: LocaleData) {
     super(generator);
@@ -11,29 +35,17 @@ export class AutomotiveProvider extends BaseProvider {
   }
 
   license_plate(): string {
-    return this.generator.bothify(
-      this.randomElement(this.data.licensePlateFormats || ["?### ???"])
-    );
+    const pattern = this.randomElement(this.data.licensePlateFormats);
+    return this.bothify(pattern, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   }
 
   vin(): string {
-    // Simplified VIN: WMI (3 chars) + VDS (6 chars) + VIS (8 chars) + check digit
-    const wmi = this.generator.lexify("???");
-    const vds = this.generator.bothify("#####");
-    const vis = this.generator.bothify("######");
-    const check = this.generator.randomDigit();
-    const year = this.generator.randomInt(0, 9);
-    const plant = this.generator.lexify("?");
-    const serial = this.generator.bothify("#####");
-    return `${wmi}${vds}${vis}${check}${year}${plant}${serial}`.toUpperCase();
-  }
-
-  _get_char_weight(char: string): number {
-    const weights: Record<string, number> = {
-      A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8,
-      J: 1, K: 2, L: 3, M: 4, N: 5, P: 7, R: 9, S: 2,
-      T: 3, U: 4, V: 5, W: 6, X: 7, Y: 8, Z: 9,
-    };
-    return weights[char.toUpperCase()] || 0;
+    const frontPart = this.bothify("????????", VIN_CHARS);
+    const rearPart = this.bothify("????####", VIN_CHARS);
+    const frontPartWeight = calculate_vin_str_weight(frontPart, [8, 7, 6, 5, 4, 3, 2, 10]);
+    const rearPartWeight = calculate_vin_str_weight(rearPart, [9, 8, 7, 6, 5, 4, 3, 2]);
+    const checksum = (frontPartWeight + rearPartWeight) % 11;
+    const checksumChar = checksum === 10 ? "X" : String(checksum);
+    return frontPart + checksumChar + rearPart;
   }
 }

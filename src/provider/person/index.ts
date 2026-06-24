@@ -1,9 +1,9 @@
 import { BaseProvider } from "../../generator";
-import type { LocaleData } from "../../dictionary/types";
+import type { LocaleData, NameList } from "../../dictionary/types";
 
 export class PersonProvider extends BaseProvider {
   __provider__ = "person";
-  private data: LocaleData;
+  protected data: LocaleData;
 
   constructor(generator: import("../../generator").Generator, data: LocaleData) {
     super(generator);
@@ -80,12 +80,19 @@ export class PersonProvider extends BaseProvider {
     return this.last_name();
   }
 
+  private _toNameList(data: NameList | undefined): string[] {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    return Object.keys(data);
+  }
+
   prefix(): string {
     if (this.data.prefixes) return this.randomElement(this.data.prefixes);
-    const prefixes: string[] = [];
-    if (this.data.prefixesMale) prefixes.push(...this.data.prefixesMale);
-    if (this.data.prefixesFemale) prefixes.push(...this.data.prefixesFemale);
-    if (this.data.prefixesNonBinary) prefixes.push(...this.data.prefixesNonBinary);
+    const prefixes = [
+      ...this._toNameList(this.data.prefixesMale),
+      ...this._toNameList(this.data.prefixesFemale),
+      ...this._toNameList(this.data.prefixesNonBinary),
+    ];
     return prefixes.length > 0 ? this.randomElement(prefixes) : "";
   }
 
@@ -109,10 +116,11 @@ export class PersonProvider extends BaseProvider {
 
   suffix(): string {
     if (this.data.suffixes) return this.randomElement(this.data.suffixes);
-    const suffixes: string[] = [];
-    if (this.data.suffixesMale) suffixes.push(...this.data.suffixesMale);
-    if (this.data.suffixesFemale) suffixes.push(...this.data.suffixesFemale);
-    if (this.data.suffixesNonBinary) suffixes.push(...this.data.suffixesNonBinary);
+    const suffixes = [
+      ...this._toNameList(this.data.suffixesMale),
+      ...this._toNameList(this.data.suffixesFemale),
+      ...this._toNameList(this.data.suffixesNonBinary),
+    ];
     return suffixes.length > 0 ? this.randomElement(suffixes) : "";
   }
 

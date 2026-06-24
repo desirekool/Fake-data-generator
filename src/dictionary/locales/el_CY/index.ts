@@ -1,0 +1,8 @@
+import { en_US } from "../en_US";
+import type { LocaleData } from "../../types";
+import { ssn } from "./ssn";
+
+export const el_CY: LocaleData = {
+  ...en_US,
+  ...ssn,
+};

@@ -1,13 +1,32 @@
 import { BaseProvider } from "../../generator";
 import type { LocaleData } from "../../dictionary/types";
 
+const countryCodeToName: Record<string, string> = {
+  US: "United States", GB: "United Kingdom", DE: "Germany", FR: "France",
+  IT: "Italy", ES: "Spain", AU: "Australia", JP: "Japan", CN: "China",
+  IN: "India", BR: "Brazil", RU: "Russia", KR: "South Korea", MX: "Mexico",
+  NL: "Netherlands", SE: "Sweden", NO: "Norway", DK: "Denmark", FI: "Finland",
+  SG: "Singapore", HK: "Hong Kong", TW: "Taiwan", AE: "United Arab Emirates",
+  SA: "Saudi Arabia", ZA: "South Africa", NG: "Nigeria", EG: "Egypt",
+  TR: "Turkey", PL: "Poland", CH: "Switzerland", AT: "Austria", BE: "Belgium",
+  GR: "Greece", PT: "Portugal", CZ: "Czech Republic", HU: "Hungary",
+  RO: "Romania", UA: "Ukraine", IL: "Israel", MY: "Malaysia", TH: "Thailand",
+  VN: "Vietnam", PH: "Philippines", ID: "Indonesia", NZ: "New Zealand",
+  AR: "Argentina", CL: "Chile", CO: "Colombia", PE: "Peru", BO: "Bolivia",
+  IE: "Ireland", PK: "Pakistan", BD: "Bangladesh", KE: "Kenya", CA: "Canada",
+};
+
 export class AddressProvider extends BaseProvider {
   __provider__ = "address";
-  private data: LocaleData;
+  protected data: LocaleData;
 
   constructor(generator: import("../../generator").Generator, data: LocaleData) {
     super(generator);
     this.data = data;
+  }
+
+  city_prefix(): string {
+    return this.randomElement(this.data.cityPrefixes);
   }
 
   city_suffix(): string {
@@ -18,18 +37,19 @@ export class AddressProvider extends BaseProvider {
     return this.randomElement(this.data.streetSuffixes);
   }
 
+  street_prefix(): string {
+    if (this.data.streetPrefixes) {
+      return this.randomElement(this.data.streetPrefixes);
+    }
+    return "";
+  }
+
   building_number(): string {
-    return this.numerify(
-      this.randomElement(this.data.buildingNumberFormats)
-    );
+    return this.numerify(this.randomElement(this.data.buildingNumberFormats));
   }
 
   city(): string {
-    const pattern = this.randomElement(this.data.cityFormats || [
-      "{{city_prefix}} {{city_suffix}}",
-      "{{city_prefix}} {{first_name}}",
-      "{{city_suffix}}",
-    ]);
+    const pattern = this.randomElement(this.data.cityFormats);
     return this.generator.parse(pattern);
   }
 
@@ -41,27 +61,24 @@ export class AddressProvider extends BaseProvider {
   }
 
   street_address(): string {
-    const pattern = this.randomElement(this.data.streetAddressFormats || [
-      "{{building_number}} {{street_name}}",
-    ]);
+    const pattern = this.randomElement(this.data.streetAddressFormats);
     return this.generator.parse(pattern);
   }
 
+  secondary_address(): string {
+    return this.numerify(this.randomElement(this.data.secondaryAddressFormats));
+  }
+
   postcode(): string {
-    return this.bothify(
-      this.randomElement(this.data.postcodeFormats)
-    ).toUpperCase();
+    return this.bothify(this.randomElement(this.data.postcodeFormats)).toUpperCase();
   }
 
   address(): string {
-    const pattern = this.randomElement(this.data.addressFormats || [
-      "{{street_address}} {{city}}, {{state}} {{postcode}}",
-    ]);
+    const pattern = this.randomElement(this.data.addressFormats);
     return this.generator.parse(pattern);
   }
 
   country(): string {
-    // Use alpha-2 codes as country names placeholder
     return this.randomElement(this.data.countryCodes);
   }
 
@@ -69,22 +86,25 @@ export class AddressProvider extends BaseProvider {
     if (representation === "alpha-2") {
       return this.randomElement(this.data.countryCodes);
     }
-    // Alpha-3 would need separate data; fallback to alpha-2
     return this.randomElement(this.data.countryCodes);
   }
 
   current_country_code(): string {
-    return (this as any).__lang__?.split("_")[1] || "US";
+    const parts = this.generator.locale.split("_");
+    return parts.length > 1 ? parts[1] : "US";
+  }
+
+  current_country(): string {
+    const code = this.current_country_code();
+    return countryCodeToName[code] || code;
   }
 
   state(): string {
-    if (this.data.states && this.data.states.length > 0) {
-      return this.randomElement(this.data.states);
-    }
-    if (this.data.statesAbbr && this.data.statesAbbr.length > 0) {
-      return this.randomElement(this.data.statesAbbr);
-    }
-    return this.randomElement(this.data.countryCodes);
+    return this.randomElement(this.data.states);
+  }
+
+  state_abbr(): string {
+    return this.randomElement(this.data.statesAbbr);
   }
 
   zipcode(): string {

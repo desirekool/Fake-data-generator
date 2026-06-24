@@ -1,4 +1,5 @@
 import { SeedType } from "./typing";
+import type { LocaleData } from "./dictionary/types";
 
 const _re_token = /\{\{(\w+)(?::(\w+))?\}\}/g;
 const _re_hash = /#/g;
@@ -17,12 +18,32 @@ export class Generator {
 
   providers: BaseProvider[] = [];
   private _randomFn: () => number = _random;
+  private _localeData: LocaleData | null = null;
+  private _locale: string = "en_US";
+
+  set localeData(data: LocaleData | null) {
+    this._localeData = data;
+  }
+
+  get localeData(): LocaleData | null {
+    return this._localeData;
+  }
+
+  set locale(locale: string) {
+    this._locale = locale;
+  }
+
+  get locale(): string {
+    return this._locale;
+  }
+
 
   constructor() {
     if (Generator._isSeeded) {
       this._randomFn = this.mulberry32(Generator._globalSeed);
     }
   }
+
 
   get random(): () => number {
     return this._randomFn;
@@ -49,7 +70,7 @@ export class Generator {
     Generator._globalSeed = seed;
   }
 
-  addProvider(provider: BaseProvider | (new (generator: Generator, data?: any) => BaseProvider)): void {
+    addProvider(provider: BaseProvider | (new (generator: Generator, data?: any) => BaseProvider)): void {
     const instance: BaseProvider =
       typeof provider === "function"
         ? new (provider as new (g: Generator) => BaseProvider)(this)
@@ -57,6 +78,7 @@ export class Generator {
     this.providers.unshift(instance);
     const proto = Object.getPrototypeOf(instance);
     for (const name of Object.getOwnPropertyNames(proto)) {
+      if (name === "constructor") continue;
       if (name.startsWith("_")) continue;
       const method = (instance as unknown as Record<string, unknown>)[name];
       if (typeof method === "function") {
@@ -67,15 +89,19 @@ export class Generator {
     }
   }
 
-  parse(text: string): string {
-    return text.replace(_re_token, (_, formatter) => {
-      const fn = (this as any)[formatter];
-      if (typeof fn === "function") {
-        return String(fn.call(this));
-      }
-      return "";
-    });
-  }
+   getProvider(name: string): BaseProvider | undefined {
+     return this.providers.find(provider => (provider as any).__provider__ === name) || undefined;
+   }
+
+   parse(text: string): string {
+     return text.replace(_re_token, (_, formatter) => {
+       const fn = (this as any)[formatter];
+       if (typeof fn === "function") {
+         return String(fn.call(this));
+       }
+       return "";
+     });
+   }
 
   private mulberry32(seed: SeedType): () => number {
     let h: number;

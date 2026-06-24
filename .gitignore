@@ -1,5 +1,6 @@
 # Old faker-python repo (not part of TypeScript migration)
 faker-python/
+faker-typescript/
 
 # Dependencies
 node_modules/
@@ -23,3 +24,11 @@ copy-tests.cjs
 copy-tests.js
 copy-tests.ts
 copy-tests.mjs
+
+# Scratch / debug files
+bakup/
+debug-*.ts
+debug-*.js
+test-*.ts
+test-*.js
+do-refactor.cjs

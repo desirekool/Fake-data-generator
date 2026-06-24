@@ -1,0 +1,5 @@
+import type { LocaleData } from "../../types";
+
+export const job: Partial<LocaleData> = {
+  jobTitles: ['Lập trình viên', 'Kỹ sư phần mềm', 'Kiến trúc sư phần mềm', 'Nhà phân tích dữ liệu', 'Chuyên viên bảo mật', 'Tester', 'DevOps Engineer', 'Project Manager', 'UX/UI Designer', 'Digital Marketer', 'Thực Tập', 'Nhân viên ngân hàng', 'Chuyên viên tín dụng', 'Kế toán', 'Kiểm toán', 'Nhà tư vấn tài chính', 'Chuyên viên phân tích thị trường', 'Giám đốc kinh doanh', 'Trưởng phòng kinh doanh', 'Nhân viên kinh doanh', 'Marketing Manager', 'Sales Representative', 'Chuyên viên bán hàng trực tuyến', 'Giáo viên', 'Giảng viên', 'Chuyên viên tư vấn tuyển sinh', 'Thực tập sinh giáo dục', 'Bác sĩ', 'Y tá', 'Dược sĩ', 'Điều Dưỡng', 'Kỹ sư xây dựng', 'Kiến trúc sư', 'Thợ xây', 'Kỹ sư giám sát', 'Nhân viên khách sạn', 'Nhân viên nhà hàng', 'Tư vấn khách hàng', 'Nhân viên lễ tân', 'Công nhân sản xuất', 'Kỹ sư sản xuất', 'Quản lý sản xuất', 'Nông dân', 'Kỹ sư nông nghiệp', 'Luật sư', 'Thư ký pháp lý', 'Nhà báo', 'Biên dịch viên', 'Nghệ sĩ', 'Nhà thiết kế đồ họa', 'Nhân viên hành chính', 'Chuyên viên nhân sự', 'Nhân Viên Bán Hàng'],
+};

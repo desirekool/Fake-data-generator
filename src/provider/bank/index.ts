@@ -21,32 +21,32 @@ export class BankProvider extends BaseProvider {
     return this.randomElement(["First National", "Citizens Bank", "Unity Trust"]);
   }
 
-  aba(): string {
-    return this.generator.numerify("################");
-  }
+   aba(): string {
+     return this.numerify("################");
+   }
 
-  bban(): string {
-    return this.generator.bothify("????##############");
-  }
+   bban(): string {
+     return this.bothify("????##############");
+   }
 
-  iban(): string {
-    const country = this.randomElement(this.data.countryCodes || ["GB", "DE", "FR"]);
-    const checkDigits = this.generator.numerify("##");
-    const bban = this.bban();
-    return `${country}${checkDigits}${bban}`;
-  }
+   iban(): string {
+     const country = this.randomElement(this.data.countryCodes || ["GB", "DE", "FR"]);
+     const checkDigits = this.numerify("##");
+     const bban = this.bban();
+     return `${country}${checkDigits}${bban}`;
+   }
 
-  swift(length?: number, primary = false, use_dataset = false): string {
-    if (this.data.swiftCodes && this.data.swiftCodes.length > 0 && use_dataset) {
-      return this.randomElement(this.data.swiftCodes);
-    }
-    length = length ?? 11;
-    if (primary) {
-      return `${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}`.toUpperCase() +
-        this.generator.bothify(`##${length > 8 ? "???" : ""}`);
-    }
-    return this.generator.bothify("??????##" + (length > 8 ? "???" : "")).toUpperCase();
-  }
+   swift(length?: number, primary = false, use_dataset = false): string {
+     if (this.data.swiftCodes && this.data.swiftCodes.length > 0 && use_dataset) {
+       return this.randomElement(this.data.swiftCodes);
+     }
+     length = length ?? 11;
+     if (primary) {
+       return `${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}${this.randomLetter()}`.toUpperCase() +
+         this.bothify(`##${length > 8 ? "???" : ""}`);
+     }
+     return this.bothify("??????##" + (length > 8 ? "???" : "")).toUpperCase();
+   }
 
   swift8(use_dataset = false): string {
     return this.swift(8, false, use_dataset);
