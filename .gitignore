@@ -24,6 +24,8 @@ copy-tests.cjs
 copy-tests.js
 copy-tests.ts
 copy-tests.mjs
+Migration-report.md
+implementation-plan.md
 
 # Scratch / debug files
 bakup/
