@@ -197,14 +197,6 @@ npm test         # vitest run
 
 Tests cover all providers, locale switching, seeding, and e2e integration.
 
-[//]: # (## Locale Data
-
-Locale data is stored as TypeScript modules under `src/dictionary/locales/<locale>/`. Each locale directory contains provider-specific files (e.g., `address.ts`, `person.ts`) with arrays of localized strings. Data can be regenerated from Python Faker using the included extraction script:
-
-##```bash
-##tsx scripts/extract-locales.py
-```)
-
 ## License
 
 MIT
