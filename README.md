@@ -3,6 +3,8 @@
 A TypeScript port of [Python Faker](https://github.com/joke2k/faker) — zero-dependency fake data generator for testing, development, and database seeding.
 
 > **Disclaimer:** This is an independent TypeScript reimplementation, not affiliated with the Python Faker project.
+>
+> THis is also still a WIP. currently planning to extend it as fake data provider for testing purposes, which provides same set of data each time call is made to fetch fake data 
 
 ## Features
 
@@ -195,13 +197,13 @@ npm test         # vitest run
 
 Tests cover all providers, locale switching, seeding, and e2e integration.
 
-## Locale Data
+[//]: # (## Locale Data
 
 Locale data is stored as TypeScript modules under `src/dictionary/locales/<locale>/`. Each locale directory contains provider-specific files (e.g., `address.ts`, `person.ts`) with arrays of localized strings. Data can be regenerated from Python Faker using the included extraction script:
 
-```bash
-tsx scripts/extract-locales.py
-```
+##```bash
+##tsx scripts/extract-locales.py
+```)
 
 ## License
 
